@@ -106,13 +106,16 @@ exports.uploadScan = async (request, h) => {
             fs.mkdirSync(conjunctivasDir, { recursive: true });
         }
 
-        // Get file extension
+        // Get file extension from original upload
         const filename = image.hapi.filename;
         const extension = path.extname(filename);
 
-        // Create file paths
+        // Create file paths - original scan keeps uploaded extension, conjunctiva uses PNG
         const scanFilepath = path.join(scansDir, `scan-${scanId}${extension}`);
-        const conjunctivaFilepath = path.join(conjunctivasDir, `conj-${scanId}${extension}`);
+        const conjunctivaFilepath = path.join(conjunctivasDir, `conj-${scanId}.png`);  // Force .png for conjunctiva
+
+        // Create photo URL for the original image - keeps original extension
+        const photoUrl = `/scans/scan-${scanId}${extension}`;
 
         // Read the image data
         const buffer = await new Promise((resolve, reject) => {
@@ -129,19 +132,24 @@ exports.uploadScan = async (request, h) => {
         // Save the original eye image
         await fsPromises.writeFile(scanFilepath, buffer);
 
-        // Create photo URL for the original image
-        const photoUrl = `/scans/scan-${scanId}${extension}`;
-
         // Step 1: Use the eye cropping model to extract the conjunctiva
         console.log(`Processing image ${scanId} to extract conjunctiva...`);
-        const conjunctivaBuffer = await EyeCroppingModel.extractConjunctiva(buffer);
+        const fileData = {
+            buffer: buffer,
+            originalname: `scan-${scanId}${extension}`, // Use the new filename instead of original
+            mimetype: image.hapi.headers['content-type']
+        };
+        const conjunctivaBuffer = await EyeCroppingModel.extractConjunctiva(fileData);
 
         // Save the cropped conjunctiva image
-        await fsPromises.writeFile(conjunctivaFilepath, conjunctivaBuffer);
-
-        // Step 2: Use the anemia detection model to analyze the conjunctiva
+        await fsPromises.writeFile(conjunctivaFilepath, conjunctivaBuffer);        // Step 2: Use the anemia detection model to analyze the conjunctiva
         console.log(`Analyzing conjunctiva image ${scanId} for anemia detection...`);
-        const detectionResult = await AnemiaDetectionModel.analyzeConjunctiva(conjunctivaBuffer);
+        const conjunctivaData = {
+            buffer: conjunctivaBuffer,
+            originalname: `conj-${scanId}.png`,
+            mimetype: 'image/png'
+        };
+        const detectionResult = await AnemiaDetectionModel.analyzeConjunctiva(conjunctivaData);
 
         // Extract detection result and confidence
         const scanResult = detectionResult.detection === "Anemic";

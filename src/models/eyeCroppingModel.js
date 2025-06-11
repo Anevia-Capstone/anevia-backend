@@ -10,16 +10,18 @@ const FormData = require('form-data');
 class EyeCroppingModel {
     /**
      * Process an eye image to extract the conjunctiva region using external API
-     * @param {Buffer} imageBuffer - The original eye image data as a buffer
+     * @param {Object} fileData - The original file data
+     * @param {Buffer} fileData.buffer - The image data as buffer
+     * @param {string} fileData.originalname - Original filename
+     * @param {string} fileData.mimetype - Original file type
      * @returns {Promise<Buffer>} - A buffer containing the cropped conjunctiva image
      */
-    static async extractConjunctiva(imageBuffer) {
+    static async extractConjunctiva(fileData) {
         try {
-            // Create form data for multipart/form-data request
             const formData = new FormData();
-            formData.append('file', imageBuffer, {
-                filename: 'eye_image.jpg',
-                contentType: 'image/jpeg'
+            formData.append('file', fileData.buffer, {
+                filename: fileData.originalname,
+                contentType: fileData.mimetype
             });
 
             // API endpoint for conjunctiva cropping at localhost:8000
@@ -34,17 +36,14 @@ class EyeCroppingModel {
             });
 
             // Convert response data to Buffer
-            const conjunctivaBuffer = Buffer.from(response.data);
+            const conjunctivaBuffer = response.data instanceof Buffer ? response.data : Buffer.from(response.data);
 
             console.log('Eye cropping completed successfully - received PNG image');
             return conjunctivaBuffer;
 
         } catch (error) {
             console.error('Error in eye cropping model:', error.message);
-
-            // Fallback: return original image if API fails
-            console.log('Falling back to original image due to API error');
-            return imageBuffer;
+            throw error; // Re-throw the error instead of returning the original buffer
         }
     }
 }
