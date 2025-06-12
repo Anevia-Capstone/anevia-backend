@@ -117,20 +117,19 @@
 
                         <div class="subsection">
                             <h4>Success Response (201 Created)</h4>
-                            <pre><code>{
-  "status": "success",
+                            <pre><code>{  "status": "success",
   "message": "Image uploaded successfully",
   "data": {
-    "scanId": "a1b2c3d4",
-    "photoUrl": "/scans/scan-a1b2c3d4.jpg",
+    "scanId": "fcf0aa69",
+    "photoUrl": "/scans/scan-fcf0aa69.jpg",
     "detectionDetails": {
-      "detection": "Anemic",
+      "detection": "Non-Anemic",
       "confidence": {
-        "Anemic": 0.85,
-        "Non-Anemic": 0.15
+        "Anemic": 0.4516,
+        "Non-Anemic": 0.5484
       }
     },
-    "scanDate": "2023-05-20T12:34:56.789Z"
+    "scanDate": "2025-06-12T14:48:55.721Z"
   }
 }</code></pre>
                         </div>
@@ -153,20 +152,19 @@
                             <pre><code>{
   "error": false,
   "message": "Scans fetched successfully",
-  "listScans": [
-    {
-      "scanId": "a1b2c3d4",
-      "photoUrl": "/scans/scan-a1b2c3d4.jpg",
-      "scanResult": true,
-      "confidence": 0.85,
-      "scanDate": "2023-05-20T12:34:56.789Z"
+  "listScans": [    {
+      "scanId": "fcf0aa69",
+      "photoUrl": "/scans/scan-fcf0aa69.jpg",
+      "scanResult": false,
+      "confidence": 0.4516,
+      "scanDate": "2025-06-12T14:48:55.721Z"
     },
     {
-      "scanId": "e5f6g7h8",
-      "photoUrl": "/scans/scan-e5f6g7h8.jpg",
-      "scanResult": false,
-      "confidence": 0.23,
-      "scanDate": "2023-05-19T10:24:36.123Z"
+      "scanId": "8b719f29",
+      "photoUrl": "/scans/scan-8b719f29.jpg",
+      "scanResult": true,
+      "confidence": 0.8734,
+      "scanDate": "2025-06-12T13:22:41.103Z"
     }
   ]
 }</code></pre>
@@ -195,15 +193,14 @@
 
                         <div class="subsection">
                             <h4>Success Response (200 OK)</h4>
-                            <pre><code>{
-  "error": false,
+                            <pre><code>{  "error": false,
   "message": "Scan fetched successfully",
   "scan": {
-    "scanId": "a1b2c3d4",
-    "photoUrl": "/scans/scan-a1b2c3d4.jpg",
-    "scanResult": true,
-    "confidence": 0.85,
-    "scanDate": "2023-05-20T12:34:56.789Z"
+    "scanId": "fcf0aa69",
+    "photoUrl": "/scans/scan-fcf0aa69.jpg",
+    "scanResult": false,
+    "confidence": 0.4516,
+    "scanDate": "2025-06-12T14:48:55.721Z"
   }
 }</code></pre>
                         </div>
